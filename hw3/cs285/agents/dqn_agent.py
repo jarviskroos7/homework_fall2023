@@ -66,7 +66,7 @@ class DQNAgent(nn.Module):
         # Compute target values
         with torch.no_grad():
             # TODO(student): compute target values
-            next_qa_values = ...
+            next_qa_values = self.critic(next_obs)
 
             if self.use_double_q:
                 raise NotImplementedError
@@ -77,9 +77,9 @@ class DQNAgent(nn.Module):
             target_values = ...
 
         # TODO(student): train the critic with the target values
-        qa_values = ...
-        q_values = ... # Compute from the data actions; see torch.gather
-        loss = ...
+        qa_values = self.critic(obs)
+        q_values = torch.gather(qa_values, 1, next_action.unsqueeze(1)).squeeze(1) # Compute from the data actions; see torch.gather
+        loss = self.critic_loss(q_values, target_values)
 
 
         self.critic_optimizer.zero_grad()
