@@ -101,15 +101,20 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
 
         # TODO(student): Add the data to the replay buffer
         if isinstance(replay_buffer, MemoryEfficientReplayBuffer):
+
+            if stacked_frames:
+                buffer = next_observation[-1]
+            else:
+                buffer = next_observation
             # We're using the memory-efficient replay buffer,
             # so we only insert next_observation (not observation)
-            replay_buffer.insert(action, reward, next_observation, done and not truncated)
+            replay_buffer.insert(action, reward, buffer, done and not truncated)
         else:
             # We're using the regular replay buffer
             replay_buffer.insert(observation, action, reward, next_observation, done and not truncated)
 
         # Handle episode termination
-        if done or truncated:
+        if done:
             reset_env_training()
 
             logger.log_scalar(info["episode"]["r"], "train_return", step)
@@ -195,7 +200,7 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--no_gpu", "-ngpu", action="store_true")
     parser.add_argument("--which_gpu", "-gpu_id", default=0)
-    parser.add_argument("--log_interval", type=int, default=1)
+    parser.add_argument("--log_interval", type=int, default=1000)
 
     args = parser.parse_args()
 

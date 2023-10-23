@@ -6,7 +6,7 @@ exp_name: sac_hopper_clipq
 base_config: sac
 env_name: Hopper-v4
 
-total_steps: 100000
+total_steps: 300000
 random_steps: 5000
 training_starts: 10000
 
